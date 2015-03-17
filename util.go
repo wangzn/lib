@@ -2,7 +2,6 @@ package lib
 
 import (
     "bufio"
-    "fmt"
     "io/ioutil"
     "os"
     )
@@ -10,18 +9,18 @@ import (
 func IsExist(path string) bool {
   _, err := os.Stat(path)
   if err == nil {
-    return true, nil
+    return true
   }
 
   if os.IsNotExist(err) {
-    return false, nil
+    return false
   }
 
-  return false, err
+  return false
 }
 
 func IsNotExist(path string) bool {
-  return (!IsExists(path))
+  return (!IsExist(path))
 }
 
 func FileGetContents(fn string) ([]byte, error) {
