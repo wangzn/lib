@@ -49,7 +49,7 @@ func Active(name string) (r bool) {
 }
 
 func Query(sql string)  {
-  rows, _ := Conn.Query("SELECT * FROM pub_ip_map;")
+  rows, _ := Conn.Query(sql)
   columns, _ := rows.Columns()
   count := len(columns)
   values := make([]interface{}, count)
