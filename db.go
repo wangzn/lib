@@ -14,12 +14,8 @@ type Result []Row
 var (
   DBList map[string]*DB
   Conn  *sql.DB
-<<<<<<< HEAD:db.go
-  Result []Row
   LogFile string
-=======
   CurDB *DB
->>>>>>> b1b8b555fbaa9dc4e94a347131dbd3f7c8b88649:db/db.go
 )
 
 type DB struct {
@@ -34,13 +30,13 @@ func (db *DB)init() {
 }
 
 func (db *DB)Set(addrs, name string) (r bool) {
-  db, err := sql.Open("mysql", addrs)
+  dbLink, err := sql.Open("mysql", addrs)
   if err != nil {
     log.Fatal(err)
     return false
   }
   var d DB
-  d = DB{name, db, addrs, ""}
+  d = DB{name, dbLink, addrs, ""}
   DBList[name] = &d
   return true
 }
@@ -55,12 +51,8 @@ func (db *DB)Active(name string) (r bool) {
   }
 }
 
-<<<<<<< HEAD:db.go
-func (db *DB)Query(sql string) (r bool){
-=======
-func Query(sql string) (r Result) {
+func (db *DB)Query(sql string) (r Result){
   CurDB.LastSql = sql
->>>>>>> b1b8b555fbaa9dc4e94a347131dbd3f7c8b88649:db/db.go
   rows, err := Conn.Query(sql)
   if err != nil {
     return
@@ -86,8 +78,8 @@ func Query(sql string) (r Result) {
   return r
 }
 
-func (db *DB)Current() {
-  return CurDB.name
+func (db *DB)Current() string {
+  return CurDB.Name
 }
 
 func (db *DB)LogQuery(f string) {
