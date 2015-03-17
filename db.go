@@ -1,4 +1,4 @@
-package DB
+package lib
 
 import (
   "database/sql"
@@ -15,31 +15,33 @@ var (
   DBList map[string]*DB
   Conn  *sql.DB
   Result []Row
+  LogFile string
 )
 
 type DB struct {
+  Name      string
   Link      *sql.DB
   Addrs     string
   LastSql   string
 }
 
-func init() {
+func (db *DB)init() {
   DBList = make(map[string]*DB)
 }
 
-func Set(addrs, name string) (r bool) {
+func (db *DB)Set(addrs, name string) (r bool) {
   db, err := sql.Open("mysql", addrs)
   if err != nil {
     log.Fatal(err)
     return false
   }
   var d DB
-  d = DB{db, addrs, ""}
+  d = DB{name, db, addrs, ""}
   DBList[name] = &d
   return true
 }
 
-func Active(name string) (r bool) {
+func (db *DB)Active(name string) (r bool) {
   if val, ok := DBList[name]; ok {
     Conn = val.Link
     return true
@@ -48,7 +50,7 @@ func Active(name string) (r bool) {
   }
 }
 
-func Query(sql string)  {
+func (db *DB)Query(sql string) (r bool){
   rows, err := Conn.Query(sql)
   if err != nil {
     return false
@@ -77,7 +79,15 @@ func Query(sql string)  {
   }
 }
 
-func ListDB() {
+func (db *DB)Current() {
+  return CurDB.name
+}
+
+func (db *DB)LogQuery(f string) {
+  LogFile = f
+}
+
+func (db *DB)ListDB() {
   for i, j := range DBList {
     fmt.Println(i)
     fmt.Println(j)
