@@ -4,18 +4,22 @@ import (
   "database/sql"
   "log"
   "fmt"
-
   _ "github.com/go-sql-driver/mysql"
 
 )
 
-type Row []string
+type Row map[string][]uint8
+type Result []Row
 
 var (
   DBList map[string]*DB
   Conn  *sql.DB
+<<<<<<< HEAD:db.go
   Result []Row
   LogFile string
+=======
+  CurDB *DB
+>>>>>>> b1b8b555fbaa9dc4e94a347131dbd3f7c8b88649:db/db.go
 )
 
 type DB struct {
@@ -43,6 +47,7 @@ func (db *DB)Set(addrs, name string) (r bool) {
 
 func (db *DB)Active(name string) (r bool) {
   if val, ok := DBList[name]; ok {
+    CurDB = val
     Conn = val.Link
     return true
   } else {
@@ -50,11 +55,17 @@ func (db *DB)Active(name string) (r bool) {
   }
 }
 
+<<<<<<< HEAD:db.go
 func (db *DB)Query(sql string) (r bool){
+=======
+func Query(sql string) (r Result) {
+  CurDB.LastSql = sql
+>>>>>>> b1b8b555fbaa9dc4e94a347131dbd3f7c8b88649:db/db.go
   rows, err := Conn.Query(sql)
   if err != nil {
-    return false
+    return
   }
+
   columns, _ := rows.Columns()
   count := len(columns)
   values := make([]interface{}, count)
@@ -65,18 +76,14 @@ func (db *DB)Query(sql string) (r bool){
       valuePtrs[i] = &values[i]
     }
     rows.Scan(valuePtrs ...)
+    line := make(map[string][]uint8, count)
     for i, col := range columns {
-      var v interface{}
       val := values[i]
-      b, ok := val.([]byte)
-      if (ok) {
-        v = string(b)
-      } else {
-        v = val
-      }
-      fmt.Println(col, v)
+      line[col] = val.([]byte)
     }
+    r = append(r, line)
   }
+  return r
 }
 
 func (db *DB)Current() {
