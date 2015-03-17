@@ -49,7 +49,10 @@ func Active(name string) (r bool) {
 }
 
 func Query(sql string)  {
-  rows, _ := Conn.Query(sql)
+  rows, err := Conn.Query(sql)
+  if err != nil {
+    return false
+  }
   columns, _ := rows.Columns()
   count := len(columns)
   values := make([]interface{}, count)
