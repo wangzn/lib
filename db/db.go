@@ -9,9 +9,7 @@ import (
 
 )
 
-var (
-  Row []string
-)
+type Row []string
 
 var (
   DBList map[string]*DB
