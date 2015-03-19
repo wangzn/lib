@@ -2,12 +2,21 @@ package util
 
 import (
     "bufio"
+    "io"
     "io/ioutil"
     "os"
     "net/http"
     "strings"
+    "crypto/md5"
+    "fmt"
 
     )
+
+func MD5(s string) string {
+  h := md5.New()
+  io.WriteString(h, s)
+  return fmt.Sprintf("%x", h.Sum(nil))
+}
 
 func FExist(path string) bool {
   _, err := os.Stat(path)
